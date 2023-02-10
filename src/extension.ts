@@ -3,6 +3,11 @@
 import * as vscode from "vscode";
 import { CHARACTER_MAP, MapInterface } from "./map";
 
+interface QueuedChange {
+  lastCharRange: vscode.Range,
+  lastCharReplacement: string
+}
+
 const INPUT_LANGUAGES: MapInterface = {
   en: "English",
   dv: "Dhivehi",
@@ -111,6 +116,7 @@ export function activate(context: vscode.ExtensionContext) {
       return;
     }
 
+    const queuedChanges: QueuedChange[] = [];
     e.contentChanges.forEach((change) => {
       const lastChar = change.text;
       if (!lastChar) {
@@ -129,10 +135,19 @@ export function activate(context: vscode.ExtensionContext) {
         lastCharPosition,
         lastCharPosition.translate(0, 1) // All changes handled here are single characters
       );
-      editor.edit((edit) => {
-        edit.replace(lastCharRange, lastCharReplacement);
+      queuedChanges.push({
+        lastCharRange,
+        lastCharReplacement,
       });
     });
+
+    if (queuedChanges.length > 0) {
+      editor.edit((edit) => {
+        queuedChanges.forEach(({ lastCharRange, lastCharReplacement }) => {
+          edit.replace(lastCharRange, lastCharReplacement);
+        });
+      });
+    }
   });
 }
 
