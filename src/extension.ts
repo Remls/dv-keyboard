@@ -22,7 +22,7 @@ function createStatusBarItem() {
   statusBarItem = vscode.window.createStatusBarItem(
     vscode.StatusBarAlignment.Left
   );
-  statusBarItem.command = "remls.switchInputLanguage";
+  statusBarItem.command = "dhivehiKeyboard.switchInputLanguage";
   statusBarItem.tooltip = "Switch input language";
   statusBarItem.text = "$(keyboard) " + INPUT_LANGUAGES[currentInputLanguage];
   statusBarItem.show();
@@ -58,7 +58,7 @@ export function activate(context: vscode.ExtensionContext) {
   createStatusBarItem();
 
   context.subscriptions.push(
-    vscode.commands.registerCommand("remls.switchInputLanguage", () => {
+    vscode.commands.registerCommand("dhivehiKeyboard.switchInputLanguage", () => {
       if (currentInputLanguage === "en") {
         updateLanguage("dv");
       } else {
